@@ -1,4 +1,4 @@
-package project.model.requests.transaction;
+package project.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

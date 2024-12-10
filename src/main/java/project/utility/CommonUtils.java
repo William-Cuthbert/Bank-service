@@ -1,5 +1,7 @@
 package project.utility;
 
+import java.time.format.DateTimeFormatter;
+
 public class CommonUtils {
     public static final String ACCOUNT_ENDPOINT = "/account";
     public static final String ACCOUNT_ID_ENDPOINT = ACCOUNT_ENDPOINT + "/{currentAccountId}";
@@ -31,4 +33,5 @@ public class CommonUtils {
     public static final String LOGIN_ENDPOINT = "/login";
     public static final String VERIFY_LOGIN_ENDPOINT = LOGIN_ENDPOINT + "/verify" + "/{currentAccountId}" + "/{verificationCode}";
     public static final String LOGOUT_ENDPOINT = "/logout" + "/{currentAccountId}";
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 }

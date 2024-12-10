@@ -1,7 +1,7 @@
 package project.converter;
 
 import project.repository.entity.Transaction;
-import project.model.responses.transaction.TransactionResponse;
+import project.model.TransactionResponse;
 
 public class TransactionConverter {
 
@@ -16,7 +16,7 @@ public class TransactionConverter {
                 transaction.getInitiationDate(),
                 transaction.getCompletionDate(),
                 transaction.getReference(),
-                transaction.getPaymentType()
+                transaction.getType()
         );
     }
 

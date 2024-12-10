@@ -2,15 +2,16 @@ package project.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum Payment {
+public enum PaymentType {
     DEPOSIT("Deposit"),
     WITHDRAW("Withdraw"),
     TRANSFER("Transfer"),
-    REFUND("Refund");
+    REFUND("Refund"),
+    STANDING_ORDER("Standing_Order");
 
     private final String value;
 
-    Payment(String value) {
+    PaymentType(String value) {
         this.value = value;
     }
 

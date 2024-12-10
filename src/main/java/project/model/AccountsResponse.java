@@ -1,4 +1,4 @@
-package project.model.responses.account;
+package project.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

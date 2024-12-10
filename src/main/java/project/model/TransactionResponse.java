@@ -1,9 +1,9 @@
-package project.model.responses.transaction;
+package project.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import project.enums.Payment;
+import project.enums.PaymentType;
 
 @Data
 @NoArgsConstructor
@@ -18,5 +18,5 @@ public class TransactionResponse {
     private String initiationDate;
     private String completionDate;
     private String reference;
-    private Payment paymentType;
+    private PaymentType paymentType;
 }

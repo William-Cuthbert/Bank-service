@@ -2,13 +2,13 @@ package project.converter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import project.enums.LoginStatus;
-import project.model.requests.account.UpdateAccountRequest;
-import project.model.responses.account.AccountsResponse;
+import project.enums.Status;
+import project.model.UpdateAccountRequest;
+import project.model.AccountsResponse;
 import project.repository.entity.Account;
 import project.repository.entity.Transaction;
-import project.model.responses.account.AccountResponse;
-import project.utility.CodeGenerator;
+import project.model.AccountResponse;
+import project.utility.CodeUtils;
 
 import java.util.*;
 
@@ -28,24 +28,16 @@ public class AccountConverterTest {
     public void setup() {
         String id = UUID.randomUUID().toString();
         String name = "Martin";
-        String surname = "King";
         String bank = "NatWest";
         String phoneNumber = "+447587155942";
         String emailAddress = "william.cuthbert@fisglobal.com";
-        String customerNumber = CodeGenerator.generateCustomerNumber();
-        String passNumber = CodeGenerator.generatePassNumber();
-        String verificationCode = CodeGenerator.generateVerificationCode();
-        String currency = "GBP";
-        String accountNo = CodeGenerator.generateAccountNumber();
-        String sortCode = CodeGenerator.generateSortCode();
+        String accountNo = CodeUtils.getNewAccountNumber();
+        String sortCode = CodeUtils.getNewSortCode();
         double balance = 0;
         List<Transaction> transactions = new ArrayList<>();
-        LoginStatus loginStatus = LoginStatus.LOGIN_ACCESS_GRANTED;
         accountList = new ArrayList<>();
-        account = new Account(id, name, surname, bank, phoneNumber, emailAddress, customerNumber,
-                passNumber, verificationCode, accountNo, sortCode, balance, currency, transactions, loginStatus);
-        accountResponse = new AccountResponse(id, name, surname, bank, phoneNumber, emailAddress, customerNumber,
-                passNumber, verificationCode, accountNo, sortCode, balance, currency, transactions, loginStatus);
+        account = new Account(id, name, bank, phoneNumber, emailAddress, accountNo, sortCode, balance, Status.ACTIVATE, transactions);
+        accountResponse = new AccountResponse(id, name, bank, phoneNumber, emailAddress, accountNo, sortCode, balance, transactions);
         accountsResponse = new AccountsResponse(accountList);
         updateAccountRequest = new UpdateAccountRequest(phoneNumber, emailAddress);
     }

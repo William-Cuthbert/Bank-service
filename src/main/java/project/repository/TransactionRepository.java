@@ -8,5 +8,4 @@ import java.util.Optional;
 
 public interface TransactionRepository extends CrudRepository<Transaction, String> {
     List<Transaction> findBySourceAccountIdOrderByInitiationDate(String id);
-    Optional<Transaction> findById(String id);
 }

@@ -1,4 +1,4 @@
-package project.model.requests.transaction;
+package project.model;
 
 import lombok.Data;
 import javax.validation.constraints.DecimalMin;

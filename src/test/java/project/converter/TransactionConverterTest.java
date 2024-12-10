@@ -2,14 +2,14 @@ package project.converter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import project.enums.Payment;
+import project.enums.PaymentType;
 import project.repository.entity.Transaction;
-import project.model.requests.transaction.DepositRequest;
-import project.model.requests.transaction.RefundRequest;
-import project.model.requests.transaction.TransferRequest;
-import project.model.requests.transaction.WithdrawRequest;
-import project.model.responses.transaction.TransactionResponse;
-import project.utility.CodeGenerator;
+import project.model.DepositRequest;
+import project.model.RefundRequest;
+import project.model.TransferRequest;
+import project.model.WithdrawRequest;
+import project.model.TransactionResponse;
+import project.utility.CodeUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -36,12 +36,12 @@ public class TransactionConverterTest {
         String surname = "King";
         double amount = 20.00;
         String reference = "unit test";
-        String accountNumber = CodeGenerator.generateAccountNumber();
-        String sortCode = CodeGenerator.generateSortCode();
+        String accountNumber = CodeUtils.getNewAccountNumber();
+        String sortCode = CodeUtils.getNewSortCode();
         transaction = new Transaction(id, sourceAccountId, targetAccountId, name, surname, amount,
-                LocalDateTime.now().format(dateTimeFormatter), LocalDateTime.now().format(dateTimeFormatter), reference, Payment.TRANSFER);
+                LocalDateTime.now().format(dateTimeFormatter), LocalDateTime.now().format(dateTimeFormatter), reference, PaymentType.TRANSFER);
         transactionResponse = new TransactionResponse(id, sourceAccountId, targetAccountId, name, surname, amount,
-                LocalDateTime.now().format(dateTimeFormatter), LocalDateTime.now().format(dateTimeFormatter), reference, Payment.TRANSFER);
+                LocalDateTime.now().format(dateTimeFormatter), LocalDateTime.now().format(dateTimeFormatter), reference, PaymentType.TRANSFER);
         transferRequest = new TransferRequest(amount, reference);
         refundRequest = new RefundRequest(id, amount);
         depositRequest = new DepositRequest(accountNumber, amount);
