@@ -1,4 +1,4 @@
-package project.exception;
+package project.errorhandler.exception;
 
 public class AccountExistsException extends RuntimeException {
     public AccountExistsException(String message) {

@@ -13,10 +13,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import project.enums.Status;
-import project.model.AccountCriteria;
+import project.dto.account.AccountCriteria;
 import project.repository.entity.Account;
 import project.repository.entity.Transaction;
-import project.model.CreateAccountRequest;
+import project.dto.account.CreateAccountRequest;
 import project.service.impl.AccountServiceImpl;
 import project.utility.CodeUtils;
 
@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static project.utility.CommonUtils.*;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
-@WebMvcTest(AccountRestController.class)
+@WebMvcTest(AccountController.class)
 public class AccountRestControllerTest {
 
     @MockBean

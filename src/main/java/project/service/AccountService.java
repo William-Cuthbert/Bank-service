@@ -1,11 +1,9 @@
 package project.service;
 
-import javax.validation.constraints.NotBlank;
-import project.model.AccountCriteria;
-import project.model.CreateAccountRequest;
-import project.repository.entity.Account;
-
 import java.util.List;
+import project.dto.account.AccountCriteria;
+import project.dto.account.CreateAccountRequest;
+import project.repository.entity.Account;
 
 public interface AccountService {
 

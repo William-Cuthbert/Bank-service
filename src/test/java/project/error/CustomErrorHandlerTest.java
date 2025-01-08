@@ -5,11 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import project.errorhandler.CustomErrorHandler;
 import project.errorhandler.ErrorResponse;
-import project.exception.AccountNotFoundException;
-import project.exception.AccountExistsException;
-import project.exception.AccountVerificationFailureException;
-import project.exception.TransactionNotFoundException;
-import project.exception.InvalidRequestException;
+import project.errorhandler.exception.AccountNotFoundException;
+import project.errorhandler.exception.AccountExistsException;
+import project.errorhandler.exception.AccountVerificationFailureException;
+import project.errorhandler.exception.TransactionNotFoundException;
+import project.errorhandler.exception.InvalidRequestException;
 
 import java.util.Objects;
 

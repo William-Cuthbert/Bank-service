@@ -1,10 +1,11 @@
 package project.repository.entity;
 
+import project.enums.PaymentResult;
+import project.enums.PaymentType;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import project.enums.PaymentResult;
-import project.enums.PaymentType;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

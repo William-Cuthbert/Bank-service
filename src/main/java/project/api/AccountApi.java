@@ -4,8 +4,11 @@ import static project.utility.CommonUtils.ACCOUNTS_ENDPOINT;
 import static project.utility.CommonUtils.ACCOUNT_ENDPOINT;
 import static project.utility.CommonUtils.ACCOUNT_ID_ENDPOINT;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
+import project.dto.account.AccountCriteria;
+import project.dto.account.AccountResponse;
+import project.dto.account.AccountsResponse;
+import project.dto.account.CreateAccountRequest;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,10 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import project.model.AccountCriteria;
-import project.model.AccountResponse;
-import project.model.AccountsResponse;
-import project.model.CreateAccountRequest;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 @Validated
 public interface AccountApi {
