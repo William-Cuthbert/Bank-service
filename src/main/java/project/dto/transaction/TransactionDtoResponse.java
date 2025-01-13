@@ -21,4 +21,3 @@ public class TransactionDtoResponse {
   PaymentType type;
   PaymentResult result;
 }
-

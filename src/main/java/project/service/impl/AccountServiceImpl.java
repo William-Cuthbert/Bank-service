@@ -124,7 +124,7 @@ public class AccountServiceImpl implements AccountService {
             .filter(account -> account.getStatus().equals(Status.ACTIVATE))
             .orElseThrow(() -> {
                 log.info("Account cannot be found");
-                return new AccountNotFoundException(accountId);
+                return new AccountNotFoundException("Account not found: " + accountId);
             });
     }
 

@@ -1,7 +1,10 @@
 package project.service;
 
+import project.dto.transaction.TransactionCriteria;
 import project.enums.PaymentType;
 import project.repository.entity.Transaction;
+
+import java.util.List;
 
 public interface TransactionService {
 
@@ -25,4 +28,12 @@ public interface TransactionService {
    * @return the refund transaction
    */
   Transaction refund(String transactionId);
+
+  /**
+   * finds transaction details with filters.
+   *
+   * @param transactionCriteria filter parameters to search
+   * @return the list of transactions
+   */
+  List<Transaction> findTransactionsWithFilters(TransactionCriteria transactionCriteria);
 }

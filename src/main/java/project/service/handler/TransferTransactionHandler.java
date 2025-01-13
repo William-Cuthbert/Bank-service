@@ -5,16 +5,16 @@ import static project.utility.CommonUtils.DATE_TIME_FORMATTER;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import project.enums.PaymentResult;
 import project.enums.PaymentType;
+import project.errorhandler.exception.InsufficientBalanceException;
 import project.repository.TransactionRepository;
 import project.repository.entity.Account;
 import project.repository.entity.Transaction;
 import project.service.AccountService;
-import project.service.TransactionHandler;
 
-@Service
+@Component
 public class TransferTransactionHandler implements TransactionHandler {
 
   private final AccountService accountService;
@@ -32,7 +32,7 @@ public class TransferTransactionHandler implements TransactionHandler {
     Account targetAccount = accountService.getAccount(targetId);
 
     if (sourceAccount.getBalance() < amount) {
-      throw new IllegalArgumentException("Insufficient funds for transfer");
+      throw new InsufficientBalanceException("Insufficient funds for transfer");
     }
 
     sourceAccount.setBalance(sourceAccount.getBalance() - amount);

@@ -5,16 +5,15 @@ import static project.utility.CommonUtils.DATE_TIME_FORMATTER;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import project.enums.PaymentResult;
 import project.enums.PaymentType;
 import project.repository.TransactionRepository;
 import project.repository.entity.Account;
 import project.repository.entity.Transaction;
 import project.service.AccountService;
-import project.service.TransactionHandler;
 
-@Service
+@Component
 public class RefundTransactionHandler implements TransactionHandler {
 
   private final TransactionRepository transactionRepository;

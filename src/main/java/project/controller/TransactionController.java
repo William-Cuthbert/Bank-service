@@ -1,13 +1,20 @@
 package project.controller;
 
-import project.enums.PaymentType;
+import project.dto.transaction.TransactionDtoRequest;
+import project.dto.transaction.TransactionDtoResponse;
+import project.service.mapper.TransactionMapper;
 import project.repository.entity.Transaction;
 import project.service.TransactionService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 @RestController
@@ -15,41 +22,35 @@ import jakarta.validation.constraints.NotNull;
 public class TransactionController {
 
   private final TransactionService transactionService;
+  private final TransactionMapper transactionMapper;
 
-  public TransactionController(TransactionService transactionService) {
+  public TransactionController(TransactionService transactionService, TransactionMapper transactionMapper) {
     this.transactionService = transactionService;
+    this.transactionMapper = transactionMapper;
   }
 
   /**
-   * Process a transaction of any type: DEPOSIT, WITHDRAW, TRANSFER, or REFUND.
-   *
-   * @param type      the type of transaction (required)
-   * @param sourceId  the source account ID (required)
-   * @param targetId  the target account ID (optional, only for TRANSFER or REFUND)
-   * @param amount    the transaction amount (must be positive)
-   * @param reference a reference or description for the transaction (required)
-   * @return ResponseEntity containing the processed transaction.
+   * Process a transaction (e.g., deposit, withdrawal, transfer).
    */
   @PostMapping("/process")
-  public ResponseEntity<Transaction> processTransaction(
-      @RequestParam @NotNull PaymentType type,
-      @RequestParam @NotNull String sourceId,
-      @RequestParam(required = false) String targetId,
-      @RequestParam @Min(value = 0, message = "Amount must be positive") double amount,
-      @RequestParam @NotNull String reference) {
-    Transaction transaction = transactionService.processTransaction(type, sourceId, targetId, amount, reference);
-    return ResponseEntity.ok(transaction);
+  public ResponseEntity<TransactionDtoResponse> processTransaction(
+          @Valid @RequestBody TransactionDtoRequest request) {
+    Transaction transaction = transactionMapper.toEntity(request);
+    Transaction processedTransaction = transactionService.processTransaction(transaction.getType(),
+            transaction.getSourceAccountId(), transaction.getTargetAccountId(), transaction.getAmount(),
+            transaction.getReference());
+    TransactionDtoResponse response = transactionMapper.toDto(processedTransaction);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   /**
    * Refund an existing transaction by its ID.
-   *
-   * @param transactionId the ID of the transaction to refund (required)
-   * @return ResponseEntity containing the refund transaction.
    */
   @PostMapping("/refund/{transactionId}")
-  public ResponseEntity<Transaction> refundTransaction(@PathVariable @NotNull String transactionId) {
+  public ResponseEntity<TransactionDtoResponse> refundTransaction(
+          @PathVariable @NotNull String transactionId) {
     Transaction refundTransaction = transactionService.refund(transactionId);
-    return ResponseEntity.ok(refundTransaction);
+    TransactionDtoResponse response = transactionMapper.toDto(refundTransaction);
+    return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }
