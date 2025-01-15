@@ -1,5 +1,8 @@
 package com.project.repository;
 
+import javax.persistence.LockModeType;
+import javax.transaction.Transactional;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.repository.CrudRepository;
 import com.project.enums.Status;
 import com.project.repository.entity.Account;
@@ -11,4 +14,6 @@ public interface AccountRepository extends CrudRepository<Account, String> {
     Optional<Account> findBySortCodeAndAccountNumber(String sort, String accountNum);
     Optional<Account> findByEmailAddressOrPhoneNumber(String email, String phone);
     List<Account> findByStatus(Status status);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<Account> findById(String accountId);
 }

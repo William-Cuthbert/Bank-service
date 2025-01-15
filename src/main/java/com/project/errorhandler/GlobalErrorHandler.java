@@ -18,6 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 @Slf4j
 @ControllerAdvice
 public class GlobalErrorHandler {
+
     @ExceptionHandler(value = {AccountNotFoundException.class})
     public ResponseEntity<Object> accountNotFoundException(AccountNotFoundException ex, WebRequest request) {
         String requestURI = request.getDescription(false);

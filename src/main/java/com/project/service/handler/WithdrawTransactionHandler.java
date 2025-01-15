@@ -41,8 +41,8 @@ public class WithdrawTransactionHandler implements TransactionHandler {
     transaction.setReference(reference);
     transaction.setType(PaymentType.WITHDRAW);
     transaction.setResult(PaymentResult.AUTHORIZED);
-    transaction.setInitiationDate(LocalDateTime.now().format(DATE_TIME_FORMATTER));
-    transaction.setCompletionDate(LocalDateTime.now().format(DATE_TIME_FORMATTER));
+//    transaction.setInitiationDate(LocalDateTime.now().format(DATE_TIME_FORMATTER));
+//    transaction.setCompletionDate(LocalDateTime.now().format(DATE_TIME_FORMATTER));
 
     transactionRepository.save(transaction);
     return transaction;

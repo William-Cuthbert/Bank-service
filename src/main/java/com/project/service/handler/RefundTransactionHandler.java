@@ -49,8 +49,8 @@ public class RefundTransactionHandler implements TransactionHandler {
 
     Transaction refundTransaction = new Transaction();
     refundTransaction.setId(UUID.randomUUID().toString());
-    refundTransaction.setInitiationDate(LocalDateTime.now().format(DATE_TIME_FORMATTER));
-    refundTransaction.setCompletionDate(LocalDateTime.now().format(DATE_TIME_FORMATTER));
+//    refundTransaction.setInitiationDate(LocalDateTime.now().format(DATE_TIME_FORMATTER));
+//    refundTransaction.setCompletionDate(LocalDateTime.now().format(DATE_TIME_FORMATTER));
     refundTransaction.setType(PaymentType.REFUND);
     refundTransaction.setSourceAccountId(sourceId);
     refundTransaction.setTargetAccountId(targetId);
