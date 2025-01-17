@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -36,7 +36,7 @@ public class TransactionController {
   public ResponseEntity<TransactionDtoResponse> processTransaction(
           @Valid @RequestBody TransactionDtoRequest request) {
     Transaction transaction = transactionMapper.toEntity(request);
-    Transaction processedTransaction = transactionService.processTransaction(transaction.getType(),
+    Transaction processedTransaction = transactionService.initiate(transaction.getType(),
             transaction.getSourceAccountId(), transaction.getTargetAccountId(), transaction.getAmount(),
             transaction.getReference());
     TransactionDtoResponse response = transactionMapper.toDto(processedTransaction);

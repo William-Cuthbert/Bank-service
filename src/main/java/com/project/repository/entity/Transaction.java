@@ -18,6 +18,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transaction {
+
     @Id
     private String id;
     private String sourceAccountId;
@@ -29,4 +30,21 @@ public class Transaction {
     private String reference;
     private PaymentType type;
     private PaymentResult result;
+
+//    @Override
+//    public String toString() {
+//        return "Transaction{" +
+//            "id='" + id + '\'' +
+//            ", sourceAccountId='" + sourceAccountId + '\'' +
+//            ", targetAccountId='" + targetAccountId + '\'' +
+//            ", amount=" + amount +
+//            ", currency='" + currency + '\'' +
+//            ", initiationDate=" + initiationDate +
+//            ", completionDate=" + completionDate +
+//            ", reference='" + reference + '\'' +
+//            ", type=" + type +
+//            ", result=" + result +
+//            '}';
+//    }
+
 }

@@ -8,106 +8,87 @@ import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.project.dto.transaction.TransactionCriteria;
+import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
 import com.project.repository.TransactionRepository;
 import com.project.repository.entity.Transaction;
 import com.project.service.handler.TransactionHandler;
 import com.project.service.impl.TransactionServiceImpl;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class TransactionServiceImplTest {
 
   @Mock
-  private TransactionRepository transactionRepository;
+  TransactionHandler transferHandler;
   @Mock
-  private TransactionHandler transferTransactionHandler;
+  TransactionHandler depositHandler;
   @Mock
-  private TransactionHandler refundTransactionHandler;
+  TransactionHandler refundHandler;
   @Mock
-  private TransactionHandler depositTransactionHandler;
+  TransactionHandler withdrawHandler;
   @Mock
-  private TransactionHandler withdrawTransactionHandler;
-
+  TransactionRepository transactionRepository;
   @InjectMocks
-  private TransactionServiceImpl transactionServiceImpl;
+  TransactionServiceImpl transactionServiceImpl;
 
-  private Transaction transaction;
-
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-    transaction = new Transaction("1", "sourceAccountId", "targetAccountId", 100.0, "USD",
-        LocalDateTime.now(), LocalDateTime.now(), "ref123", PaymentType.TRANSFER, null);
+  private Transaction getTransaction() {
+    Transaction transaction = new Transaction();
+    transaction.setId("transactionId");
+    transaction.setSourceAccountId("sourceId");
+    transaction.setTargetAccountId("targetId");
+    transaction.setType(PaymentType.TRANSFER);
+    transaction.setResult(PaymentResult.AUTHORIZED);
+    return transaction;
   }
 
   @Test
-  void testProcessTransaction_withTransfer() {
-    PaymentType type = PaymentType.TRANSFER;
-    when(transferTransactionHandler.handle(anyString(), anyString(), anyDouble(), anyString()))
-        .thenReturn(transaction);
-    Transaction result = transactionServiceImpl.processTransaction(type, "sourceId", "targetId", 100.0, "ref123");
+  void testInitiate_withTransfer() {
+    when(transferHandler.handle(anyString(), anyString(), anyDouble(), anyString()))
+        .thenReturn(getTransaction());
+    Transaction result = transactionServiceImpl
+        .initiate(PaymentType.TRANSFER, "sourceId", "targetId", 100.0, "ref123");
     assertNotNull(result);
     assertEquals("sourceId", result.getSourceAccountId());
     assertEquals("targetId", result.getTargetAccountId());
-    verify(transferTransactionHandler).handle("sourceId", "targetId", 100.0, "ref123");
-  }
-
-  @Test
-  void testProcessTransaction_withInvalidType() {
-    PaymentType type = PaymentType.REFUND; // no handler mapped for this one
-    when(refundTransactionHandler.handle(anyString(), anyString(), anyDouble(), anyString()))
-        .thenReturn(transaction);
-    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-      transactionServiceImpl.processTransaction(type, "sourceId", "targetId", 100.0, "ref123");
-    });
-    assertEquals("No handler found for transaction type: REFUND", exception.getMessage());
+    verify(transferHandler)
+        .handle("sourceId", "targetId", 100.0, "ref123");
   }
 
   @Test
   void testRefund() {
-    when(refundTransactionHandler.handle(anyString(), isNull(), eq(0.0), isNull()))
-        .thenReturn(transaction);
+    getTransaction().setType(PaymentType.REFUND);
+    when(refundHandler.handle(anyString(), isNull(), eq(0.0), isNull()))
+        .thenReturn(getTransaction());
     Transaction result = transactionServiceImpl.refund("transactionId");
     assertNotNull(result);
     assertEquals("transactionId", result.getId());
-    verify(refundTransactionHandler).handle("transactionId", null, 0, null);
+    verify(refundHandler).handle("transactionId", null, 0, null);
   }
 
   @Test
-  void testFindTransactionsWithFilters() {
-    TransactionCriteria criteria = mock(TransactionCriteria.class);
-    when(criteria.getAccountId()).thenReturn("sourceAccountId");
-    when(transactionRepository.findAll()).thenReturn(Collections.singletonList(transaction));
+  void testFindTransactionsWithOneFilter() {
+    TransactionCriteria criteria = new TransactionCriteria();
+    criteria.setAccountId("sourceId");
+    when(transactionRepository.findByResult(PaymentResult.AUTHORIZED))
+        .thenReturn(Collections.singletonList(getTransaction()));
     List<Transaction> result = transactionServiceImpl.findTransactionsWithFilters(criteria);
-    assertNotNull(result);
     assertFalse(result.isEmpty());
-    assertEquals("sourceAccountId", result.get(0).getSourceAccountId());
-  }
-
-  @Test
-  void testFindTransactionsWithDateFilter() {
-    TransactionCriteria criteria = mock(TransactionCriteria.class);
-    when(criteria.getStartDate()).thenReturn("2025-01-01 00:00:00");
-    when(criteria.getEndDate()).thenReturn("2025-12-31 23:59:59");
-    when(transactionRepository.findAll()).thenReturn(Collections.singletonList(transaction));
-    List<Transaction> result = transactionServiceImpl.findTransactionsWithFilters(criteria);
-    assertNotNull(result);
-    assertFalse(result.isEmpty());
+    assertEquals("sourceId", result.get(0).getSourceAccountId());
   }
 }

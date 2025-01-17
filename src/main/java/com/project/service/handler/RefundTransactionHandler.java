@@ -5,6 +5,7 @@ import static com.project.utility.CommonUtils.DATE_TIME_FORMATTER;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
@@ -14,6 +15,7 @@ import com.project.repository.entity.Transaction;
 import com.project.service.AccountService;
 
 @Component
+@Qualifier("refundHandler")
 public class RefundTransactionHandler implements TransactionHandler {
 
   private final TransactionRepository transactionRepository;

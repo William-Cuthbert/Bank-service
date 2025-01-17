@@ -10,6 +10,7 @@ import com.project.service.AccountService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import javax.transaction.Transactional;
 
 @Slf4j
 @Component
+@Qualifier("transferHandler")
 public class TransferTransactionHandler implements TransactionHandler {
 
   private final AccountService accountService;

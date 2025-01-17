@@ -10,11 +10,13 @@ import com.project.repository.entity.Transaction;
 import com.project.service.AccountService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Component
+@Qualifier("withdrawHandler")
 public class WithdrawTransactionHandler implements TransactionHandler {
 
   private final AccountService accountService;

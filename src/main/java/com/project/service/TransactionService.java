@@ -18,7 +18,7 @@ public interface TransactionService {
    * @param reference a reference note for the transaction
    * @return the completed Transaction object
    */
-  Transaction processTransaction(PaymentType type, String sourceId, String targetId, double amount,
+  Transaction initiate(PaymentType type, String sourceId, String targetId, double amount,
       String reference);
 
   /**

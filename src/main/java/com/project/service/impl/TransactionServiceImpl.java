@@ -2,61 +2,78 @@ package com.project.service.impl;
 
 import static com.project.utility.CommonUtils.DATE_TIME_FORMATTER;
 import com.project.dto.transaction.TransactionCriteria;
+import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
 import com.project.repository.entity.Transaction;
 import com.project.repository.TransactionRepository;
-import com.project.service.handler.DepositTransactionHandler;
-import com.project.service.handler.TransferTransactionHandler;
-import com.project.service.handler.WithdrawTransactionHandler;
 import com.project.service.handler.RefundTransactionHandler;
 import com.project.service.handler.TransactionHandler;
 import com.project.service.TransactionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeParseException;
 import java.time.LocalDateTime;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
-  private final Map<PaymentType, TransactionHandler> handlerMap;
-  private final TransactionRepository transactionRepository;
+  @Autowired
+  @Qualifier("transaction")
+  private TransactionRepository transactionRepository;
 
   @Autowired
-  public TransactionServiceImpl(List<TransactionHandler> handlers, TransactionRepository transactionRepository) {
-    this.transactionRepository = transactionRepository;
-    handlerMap = handlers.stream()
-            .collect(Collectors.toMap(this::getPaymentTypeForHandler, Function.identity()));
-  }
+  @Qualifier("transferHandler")
+  private TransactionHandler transferHandler;
 
-  private PaymentType getPaymentTypeForHandler(TransactionHandler handler) {
-    if (handler instanceof TransferTransactionHandler) return PaymentType.TRANSFER;
-    if (handler instanceof RefundTransactionHandler) return PaymentType.REFUND;
-    if (handler instanceof DepositTransactionHandler) return PaymentType.DEPOSIT;
-    if (handler instanceof WithdrawTransactionHandler) return PaymentType.WITHDRAW;
-    throw new IllegalStateException("Unsupported handler type for: " + handler.getClass().getName());
+  @Autowired
+  @Qualifier("depositHandler")
+  private TransactionHandler depositHandler;
+
+  @Autowired
+  @Qualifier("refundHandler")
+  private TransactionHandler refundHandler;
+
+  @Autowired
+  @Qualifier("withdrawHandler")
+  private TransactionHandler withdrawHandler;
+
+  private TransactionHandler getHandler(PaymentType type) {
+    switch (type) {
+      case TRANSFER:
+        return transferHandler;
+      case DEPOSIT:
+        return depositHandler;
+      case REFUND:
+        return refundHandler;
+      case WITHDRAW:
+        return withdrawHandler;
+      default:
+        return null;
+    }
   }
 
   @Override
-  public Transaction processTransaction(PaymentType type, String sourceId, String targetId,
+  public Transaction initiate(PaymentType type, String sourceId, String targetId,
                                         double amount, String reference) {
-    TransactionHandler handler = handlerMap.get(type);
+    TransactionHandler handler = getHandler(type);
     if (handler == null) {
       throw new IllegalArgumentException("No handler found for transaction type: " + type);
+    }
+    if (handler instanceof RefundTransactionHandler) {
+      throw new IllegalArgumentException("Refund handler logic is not here: " + type);
     }
     return handler.handle(sourceId, targetId, amount, reference);
   }
 
   @Override
   public Transaction refund(String transactionId) {
-    TransactionHandler handler = handlerMap.get(PaymentType.REFUND);
+    TransactionHandler handler = getHandler(PaymentType.REFUND);
     if (handler == null) {
       throw new IllegalArgumentException("Refund handler not found");
     }
@@ -65,56 +82,19 @@ public class TransactionServiceImpl implements TransactionService {
 
   @Override
   public List<Transaction> findTransactionsWithFilters(TransactionCriteria criteria) {
-    return transactionRepository.findAll()
-            .stream()
-            .filter(isAccountIdCriteriaMet(criteria))
-            .filter(isPaymentTypeCriteriaMet(criteria))
-            .filter(isPaymentResultCriteriaMet(criteria))
-            .filter(isDateCriteriaMet(criteria))
-            .collect(Collectors.toList());
-  }
-
-  private Predicate<Transaction> isAccountIdCriteriaMet(TransactionCriteria criteria) {
-    return transaction -> {
-      String accountId = criteria.getAccountId();
-      return accountId == null || accountId.equals(transaction.getSourceAccountId())
-          || accountId.equals(transaction.getTargetAccountId());
-    };
-  }
-
-  private Predicate<Transaction> isPaymentTypeCriteriaMet(TransactionCriteria criteria) {
-    final boolean isTypeEmpty = criteria.getType() == null;
-    return transaction -> !isTypeEmpty ? criteria.getType().equals(
-        transaction.getType()) : Boolean.TRUE;
-  }
-
-  private Predicate<Transaction> isPaymentResultCriteriaMet(TransactionCriteria criteria) {
-    final boolean isResultEmpty = criteria.getResult() == null;
-    return transaction -> !isResultEmpty ? criteria.getResult().equals(
-        transaction.getResult()) : Boolean.TRUE;
-  }
-
-  private Predicate<Transaction> isDateCriteriaMet(TransactionCriteria criteria) {
-    String startDateStr = criteria.getStartDate();
-    String endDateStr = criteria.getEndDate();
-
-    LocalDateTime startDate = parseDate(startDateStr);
-    LocalDateTime endDate = parseDate(endDateStr);
-
-    return transaction -> (startDate == null || transaction.getInitiationDate()
-        .isAfter(startDate) || transaction.getInitiationDate().isEqual(startDate))
-        && (endDate == null || transaction.getInitiationDate().isBefore(endDate) ||
-        transaction.getInitiationDate().isEqual(endDate));
-  }
-
-  private LocalDateTime parseDate(String dateTimeStr) {
-    if (dateTimeStr == null || dateTimeStr.isEmpty()) {
-      return null;
+    List<Transaction> transactions = transactionRepository.findByResult(PaymentResult.AUTHORIZED);
+    if (criteria.getAccountId() != null) {
+      transactions.stream().filter(transaction ->
+          transaction.getSourceAccountId().equals(criteria.getAccountId()));
     }
-    try {
-      return LocalDateTime.parse(dateTimeStr, DATE_TIME_FORMATTER);
-    } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException("Invalid date format: " + dateTimeStr);
+    if (criteria.getReference() != null) {
+      transactions.stream().filter(transaction ->
+          transaction.getReference().equals(criteria.getReference()));
     }
+    if (criteria.getType() != null) {
+      transactions.stream().filter(transaction ->
+          transaction.getType() == criteria.getType());
+    }
+    return transactions;
   }
 }
