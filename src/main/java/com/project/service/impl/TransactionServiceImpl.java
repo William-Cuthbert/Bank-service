@@ -1,6 +1,5 @@
 package com.project.service.impl;
 
-import static com.project.utility.CommonUtils.DATE_TIME_FORMATTER;
 import com.project.dto.transaction.TransactionCriteria;
 import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
@@ -10,36 +9,24 @@ import com.project.service.handler.RefundTransactionHandler;
 import com.project.service.handler.TransactionHandler;
 import com.project.service.TransactionService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeParseException;
-import java.time.LocalDateTime;
-import java.util.function.Predicate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
-  @Autowired
   @Qualifier("transaction")
   private TransactionRepository transactionRepository;
-
-  @Autowired
   @Qualifier("transferHandler")
   private TransactionHandler transferHandler;
-
-  @Autowired
   @Qualifier("depositHandler")
   private TransactionHandler depositHandler;
-
-  @Autowired
   @Qualifier("refundHandler")
   private TransactionHandler refundHandler;
-
-  @Autowired
   @Qualifier("withdrawHandler")
   private TransactionHandler withdrawHandler;
 
@@ -82,19 +69,29 @@ public class TransactionServiceImpl implements TransactionService {
 
   @Override
   public List<Transaction> findTransactionsWithFilters(TransactionCriteria criteria) {
-    List<Transaction> transactions = transactionRepository.findByResult(PaymentResult.AUTHORIZED);
-    if (criteria.getAccountId() != null) {
-      transactions.stream().filter(transaction ->
-          transaction.getSourceAccountId().equals(criteria.getAccountId()));
-    }
-    if (criteria.getReference() != null) {
-      transactions.stream().filter(transaction ->
-          transaction.getReference().equals(criteria.getReference()));
-    }
-    if (criteria.getType() != null) {
-      transactions.stream().filter(transaction ->
-          transaction.getType() == criteria.getType());
-    }
-    return transactions;
+    return transactionRepository.findByResult(PaymentResult.AUTHORIZED)
+            .stream()
+            .filter(isSourceIdValid(criteria))
+            .filter(isReferenceValid(criteria))
+            .filter(isTypeValid(criteria))
+            .collect(Collectors.toList());
+  }
+
+  private Predicate<Transaction> isSourceIdValid(TransactionCriteria criteria) {
+    boolean isSourceIdEmpty = criteria.getAccountId() == null;
+    return transaction -> !isSourceIdEmpty ? criteria.getAccountId()
+        .equals(transaction.getSourceAccountId()) : Boolean.TRUE;
+  }
+
+  private Predicate<Transaction> isReferenceValid(TransactionCriteria criteria) {
+    boolean isRefEmpty = criteria.getReference() == null;
+    return transaction -> !isRefEmpty ? criteria.getReference()
+        .equals(transaction.getReference()) : Boolean.TRUE;
+  }
+
+  private Predicate<Transaction> isTypeValid(TransactionCriteria criteria) {
+    boolean isTypeEmpty = criteria.getType() == null;
+    return transaction -> !isTypeEmpty ? criteria.getType()
+        .equals(transaction.getType()) : Boolean.TRUE;
   }
 }
