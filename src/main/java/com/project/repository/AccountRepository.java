@@ -1,8 +1,5 @@
 package com.project.repository;
 
-import javax.persistence.LockModeType;
-import javax.transaction.Transactional;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.repository.CrudRepository;
 import com.project.enums.Status;
 import com.project.repository.entity.Account;

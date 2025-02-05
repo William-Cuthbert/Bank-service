@@ -1,37 +1,34 @@
-package com.project.service.handler;
-
-import static com.project.utility.CommonUtils.DATE_TIME_FORMATTER;
+package com.project.service.logic;
 
 import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
 import com.project.repository.TransactionRepository;
 import com.project.repository.entity.Account;
 import com.project.repository.entity.Transaction;
-import com.project.service.AccountService;
 
+import com.project.service.AccountService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
+@Slf4j
 @Component
-@Qualifier("depositHandler")
-public class DepositTransactionHandler implements TransactionHandler {
+public class WithdrawTransactionLogic implements TransactionLogic {
 
   private final AccountService accountService;
   private final TransactionRepository transactionRepository;
 
   @Autowired
-  public DepositTransactionHandler(AccountService accountService, TransactionRepository transactionRepository) {
+  public WithdrawTransactionLogic(AccountService accountService, TransactionRepository transactionRepository) {
     this.accountService = accountService;
     this.transactionRepository = transactionRepository;
   }
 
   @Override
-  public Transaction handle(String sourceId, String targetId, double amount, String reference) {
+  public Transaction executeLogic(String sourceId, String targetId, double amount, String reference) {
     Account sourceAccount = accountService.getAccount(sourceId);
-    double newBalance = sourceAccount.getBalance() - amount;
+    double newBalance = sourceAccount.getBalance() + amount;
     sourceAccount.setBalance(newBalance);
 
     accountService.updateAccount(sourceAccount);
@@ -41,7 +38,7 @@ public class DepositTransactionHandler implements TransactionHandler {
     transaction.setTargetAccountId(targetId);
     transaction.setAmount(amount);
     transaction.setReference(reference);
-    transaction.setType(PaymentType.DEPOSIT);
+    transaction.setType(PaymentType.WITHDRAW);
     transaction.setResult(PaymentResult.AUTHORIZED);
 //    transaction.setInitiationDate(LocalDateTime.now().format(DATE_TIME_FORMATTER));
 //    transaction.setCompletionDate(LocalDateTime.now().format(DATE_TIME_FORMATTER));
@@ -50,4 +47,3 @@ public class DepositTransactionHandler implements TransactionHandler {
     return transaction;
   }
 }
-

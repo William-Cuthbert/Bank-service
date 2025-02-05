@@ -18,7 +18,7 @@ public interface TransactionService {
    * @param reference a reference note for the transaction
    * @return the completed Transaction object
    */
-  Transaction initiate(PaymentType type, String sourceId, String targetId, double amount,
+  Transaction createTransaction(PaymentType type, String sourceId, String targetId, double amount,
       String reference);
 
   /**
@@ -27,7 +27,7 @@ public interface TransactionService {
    * @param transactionId the ID of the transaction to refund
    * @return the refund transaction
    */
-  Transaction refund(String transactionId);
+  Transaction refundTransaction(String transactionId);
 
   /**
    * finds transaction details with filters.

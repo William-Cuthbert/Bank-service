@@ -1,19 +1,23 @@
 package com.project.controller;
 
+import com.project.api.AccountApi;
 import com.project.dto.account.AccountResponse;
+import com.project.dto.account.CreateAccountRequest;
 import com.project.repository.entity.Account;
 import com.project.service.AccountService;
 
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotBlank;
 
 @RestController
-public class AccountController {
+public class AccountController implements AccountApi {
 
   private final AccountService accountService;
 
@@ -22,13 +26,12 @@ public class AccountController {
     this.accountService = accountService;
   }
 
-//  @Override
-//  public ResponseEntity<AccountResponse> createAccount(
-//      @Valid @RequestBody CreateAccountRequest createAccountRequest) {
-//    Account account = accountService.createAccount(createAccountRequest);
-//    return new ResponseEntity<>(AccountConverter.convertToAccountResponse(account),
-//        HttpStatus.CREATED);
-//  }
+  @Override
+  public ResponseEntity<Account> createAccount(
+      @Valid @RequestBody CreateAccountRequest createAccountRequest) {
+    Account account = accountService.createAccount(createAccountRequest);
+    return new ResponseEntity<>(account, HttpStatus.CREATED);
+  }
 
 //  @Override
 //  public ResponseEntity<AccountResponse> getAccountBySortCodeAndAccountNumber(

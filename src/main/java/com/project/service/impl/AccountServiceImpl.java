@@ -6,7 +6,6 @@ import static com.project.utility.CodeUtils.getNewSortCode;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -122,7 +121,6 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account getAccount(String accountId) {
         return accountRepository.findById(accountId)
-            .filter(account -> account.getStatus().equals(Status.ACTIVATE))
             .orElseThrow(() -> {
                 log.info("Account cannot be found");
                 return new AccountNotFoundException("Account not found: " + accountId);

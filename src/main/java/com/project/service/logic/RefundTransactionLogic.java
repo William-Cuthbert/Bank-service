@@ -1,34 +1,31 @@
-package com.project.service.handler;
+package com.project.service.logic;
 
-import static com.project.utility.CommonUtils.DATE_TIME_FORMATTER;
-
-import java.time.LocalDateTime;
+import com.project.service.AccountService;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
 import com.project.repository.TransactionRepository;
 import com.project.repository.entity.Account;
 import com.project.repository.entity.Transaction;
-import com.project.service.AccountService;
 
+@Slf4j
 @Component
-@Qualifier("refundHandler")
-public class RefundTransactionHandler implements TransactionHandler {
+public class RefundTransactionLogic implements TransactionLogic {
 
   private final TransactionRepository transactionRepository;
   private final AccountService accountService;
 
   @Autowired
-  public RefundTransactionHandler(TransactionRepository transactionRepository, AccountService accountService) {
+  public RefundTransactionLogic(TransactionRepository transactionRepository, AccountService accountService) {
     this.transactionRepository = transactionRepository;
     this.accountService = accountService;
   }
 
   @Override
-  public Transaction handle(String originalTransactionId, String unused, double unusedAmount, String unusedReference) {
+  public Transaction executeLogic(String originalTransactionId, String unused, double unusedAmount, String unusedReference) {
     Transaction originalTransaction = transactionRepository.findById(originalTransactionId)
         .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
 

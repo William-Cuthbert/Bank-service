@@ -3,11 +3,15 @@ package com.project.dto.transaction;
 import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Value
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionDtoResponse {
   String id;
   String sourceAccountId;

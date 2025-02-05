@@ -5,13 +5,11 @@ import com.project.repository.entity.Transaction;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Qualifier("transaction")
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
     List<Transaction> findBySourceAccountIdOrderByInitiationDate(String sourceAccountId);
     List<Transaction> findByResult(PaymentResult result);

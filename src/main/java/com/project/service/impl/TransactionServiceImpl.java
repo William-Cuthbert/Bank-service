@@ -5,13 +5,17 @@ import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
 import com.project.repository.entity.Transaction;
 import com.project.repository.TransactionRepository;
-import com.project.service.handler.RefundTransactionHandler;
-import com.project.service.handler.TransactionHandler;
+import com.project.service.logic.DepositTransactionLogic;
+import com.project.service.logic.RefundTransactionLogic;
+import com.project.service.logic.TransactionLogic;
 import com.project.service.TransactionService;
 
+import com.project.service.logic.TransferTransactionLogic;
+import com.project.service.logic.WithdrawTransactionLogic;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,52 +23,65 @@ import java.util.List;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
-  @Qualifier("transaction")
-  private TransactionRepository transactionRepository;
-  @Qualifier("transferHandler")
-  private TransactionHandler transferHandler;
-  @Qualifier("depositHandler")
-  private TransactionHandler depositHandler;
-  @Qualifier("refundHandler")
-  private TransactionHandler refundHandler;
-  @Qualifier("withdrawHandler")
-  private TransactionHandler withdrawHandler;
+  private final TransactionRepository transactionRepository;
+  private final TransferTransactionLogic transferTransactionLogic;
+  private final RefundTransactionLogic refundTransactionLogic;
+  private final DepositTransactionLogic depositTransactionLogic;
+  private final WithdrawTransactionLogic withdrawTransactionLogic;
+  private final ApplicationContext applicationContext;
 
-  private TransactionHandler getHandler(PaymentType type) {
+
+  @Autowired
+  public TransactionServiceImpl(
+      TransactionRepository transactionRepository,
+      TransferTransactionLogic transferTransactionLogic,
+      RefundTransactionLogic refundTransactionLogic,
+      DepositTransactionLogic depositTransactionLogic,
+      WithdrawTransactionLogic withdrawTransactionLogic,
+      ApplicationContext applicationContext) {
+    this.transactionRepository = transactionRepository;
+    this.transferTransactionLogic = transferTransactionLogic;
+    this.refundTransactionLogic = refundTransactionLogic;
+    this.depositTransactionLogic = depositTransactionLogic;
+    this.withdrawTransactionLogic = withdrawTransactionLogic;
+    this.applicationContext = applicationContext;
+  }
+
+  private TransactionLogic getHandler(PaymentType type) {
     switch (type) {
       case TRANSFER:
-        return transferHandler;
+        return applicationContext.getBean(TransferTransactionLogic.class);
       case DEPOSIT:
-        return depositHandler;
+        return applicationContext.getBean(DepositTransactionLogic.class);
       case REFUND:
-        return refundHandler;
+        return applicationContext.getBean(RefundTransactionLogic.class);
       case WITHDRAW:
-        return withdrawHandler;
+        return applicationContext.getBean(WithdrawTransactionLogic.class);
       default:
-        return null;
+        throw new IllegalArgumentException("No handler found for transaction type: " + type);
     }
   }
 
   @Override
-  public Transaction initiate(PaymentType type, String sourceId, String targetId,
+  public Transaction createTransaction(PaymentType type, String sourceId, String targetId,
                                         double amount, String reference) {
-    TransactionHandler handler = getHandler(type);
+    TransactionLogic handler = getHandler(type);
     if (handler == null) {
       throw new IllegalArgumentException("No handler found for transaction type: " + type);
     }
-    if (handler instanceof RefundTransactionHandler) {
+    if (handler instanceof RefundTransactionLogic) {
       throw new IllegalArgumentException("Refund handler logic is not here: " + type);
     }
-    return handler.handle(sourceId, targetId, amount, reference);
+    return handler.executeLogic(sourceId, targetId, amount, reference);
   }
 
   @Override
-  public Transaction refund(String transactionId) {
-    TransactionHandler handler = getHandler(PaymentType.REFUND);
+  public Transaction refundTransaction(String transactionId) {
+    TransactionLogic handler = getHandler(PaymentType.REFUND);
     if (handler == null) {
       throw new IllegalArgumentException("Refund handler not found");
     }
-    return handler.handle(transactionId, null, 0, null);
+    return handler.executeLogic(transactionId, null, 0, null);
   }
 
   @Override

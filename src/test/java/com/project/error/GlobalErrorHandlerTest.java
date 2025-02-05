@@ -1,4 +1,4 @@
-package com.error;
+package com.project.error;
 
 import com.project.errorhandler.exception.AccountExistsException;
 import com.project.errorhandler.exception.AccountNotFoundException;

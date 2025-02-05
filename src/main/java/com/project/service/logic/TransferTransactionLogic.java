@@ -1,4 +1,4 @@
-package com.project.service.handler;
+package com.project.service.logic;
 
 import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
@@ -6,37 +6,32 @@ import com.project.errorhandler.exception.InsufficientBalanceException;
 import com.project.repository.TransactionRepository;
 import com.project.repository.entity.Account;
 import com.project.repository.entity.Transaction;
-import com.project.service.AccountService;
 
+import com.project.service.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.persistence.OptimisticLockException;
 import javax.transaction.Transactional;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@Qualifier("transferHandler")
-public class TransferTransactionHandler implements TransactionHandler {
+public class TransferTransactionLogic implements TransactionLogic {
 
   private final AccountService accountService;
   private final TransactionRepository transactionRepository;
 
   @Autowired
-  public TransferTransactionHandler(AccountService accountService,
-      TransactionRepository transactionRepository) {
+  public TransferTransactionLogic(AccountService accountService, TransactionRepository transactionRepository) {
     this.accountService = accountService;
     this.transactionRepository = transactionRepository;
   }
 
-  @Transactional
   @Override
-  public Transaction handle(String sourceId, String targetId, double amount, String reference) {
-    try {
+  public Transaction executeLogic(String sourceId, String targetId, double amount, String reference) {
       Account sourceAccount = accountService.getAccount(sourceId);
       Account targetAccount = accountService.getAccount(targetId);
       updateBalancesForTransfer(sourceAccount, targetAccount, amount);
@@ -54,11 +49,6 @@ public class TransferTransactionHandler implements TransactionHandler {
           .result(PaymentResult.AUTHORIZED)
           .build();
       return transactionRepository.save(transaction);
-    } catch (OptimisticLockException e) {
-      log.error("Concurrency issue detected during transfer: {}", e.getMessage(), e);
-      throw new OptimisticLockException("A concurrency issue occurred while processing "
-          + "the transaction. Please try again.");
-    }
   }
 
   private void updateBalancesForTransfer(

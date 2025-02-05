@@ -9,6 +9,7 @@ import com.project.dto.account.AccountResponse;
 import com.project.dto.account.AccountsResponse;
 import com.project.dto.account.CreateAccountRequest;
 
+import com.project.repository.entity.Account;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,23 +29,23 @@ public interface AccountApi {
   @PostMapping(value = ACCOUNT_ENDPOINT,
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<AccountResponse> createAccount(
+  ResponseEntity<Account> createAccount(
       @Valid @RequestBody CreateAccountRequest createAccountRequest);
 
-  @GetMapping(value = ACCOUNT_ENDPOINT,
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<AccountResponse> getAccountBySortCodeAndAccountNumber(
-      @RequestParam @Valid String sortCode, @RequestParam @Valid String accountNumber);
-
-  @GetMapping(value = ACCOUNTS_ENDPOINT,
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<AccountsResponse> getAccounts(@Valid final AccountCriteria accountCriteria);
-
-  @DeleteMapping(value = ACCOUNT_ID_ENDPOINT,
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<AccountResponse> deleteAccount(@PathVariable @NotBlank String currentAccountId);
+//  @GetMapping(value = ACCOUNT_ENDPOINT,
+//      consumes = MediaType.APPLICATION_JSON_VALUE,
+//      produces = MediaType.APPLICATION_JSON_VALUE)
+//  ResponseEntity<AccountResponse> getAccountBySortCodeAndAccountNumber(
+//      @RequestParam @Valid String sortCode, @RequestParam @Valid String accountNumber);
+//
+//  @GetMapping(value = ACCOUNTS_ENDPOINT,
+//      consumes = MediaType.APPLICATION_JSON_VALUE,
+//      produces = MediaType.APPLICATION_JSON_VALUE)
+//  ResponseEntity<AccountsResponse> getAccounts(@Valid final AccountCriteria accountCriteria);
+//
+//  @DeleteMapping(value = ACCOUNT_ID_ENDPOINT,
+//      consumes = MediaType.APPLICATION_JSON_VALUE,
+//      produces = MediaType.APPLICATION_JSON_VALUE)
+//  ResponseEntity<AccountResponse> deleteAccount(@PathVariable @NotBlank String currentAccountId);
 
 }

@@ -1,6 +1,5 @@
 package com.project.dto.transaction;
 
-import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
 
 import lombok.AllArgsConstructor;
