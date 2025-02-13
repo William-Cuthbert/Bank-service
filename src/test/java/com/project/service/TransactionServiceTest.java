@@ -18,10 +18,10 @@ import com.project.repository.TransactionRepository;
 import com.project.repository.entity.Transaction;
 import com.project.service.impl.TransactionServiceImpl;
 
-import com.project.service.logic.DepositTransactionLogic;
-import com.project.service.logic.RefundTransactionLogic;
-import com.project.service.logic.TransferTransactionLogic;
-import com.project.service.logic.WithdrawTransactionLogic;
+import com.project.service.paymentLogic.DepositTransactionLogic;
+import com.project.service.paymentLogic.RefundTransactionLogic;
+import com.project.service.paymentLogic.TransferTransactionLogic;
+import com.project.service.paymentLogic.WithdrawTransactionLogic;
 import java.util.Collections;
 import java.util.List;
 

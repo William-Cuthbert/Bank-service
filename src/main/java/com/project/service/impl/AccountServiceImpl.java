@@ -13,7 +13,7 @@ import com.project.enums.Status;
 import com.project.errorhandler.exception.AccountExistsException;
 import com.project.errorhandler.exception.AccountNotFoundException;
 import com.project.dto.account.AccountCriteria;
-import com.project.dto.account.CreateAccountRequest;
+import com.project.dto.account.AccountDtoRequest;
 import com.project.repository.entity.Account;
 import com.project.repository.AccountRepository;
 import com.project.repository.TransactionRepository;
@@ -37,7 +37,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account createAccount(final CreateAccountRequest createAccountRequest) {
+    public Account createAccount(final AccountDtoRequest createAccountRequest) {
         doesAccountExists(createAccountRequest.getEmailAddress(),
             createAccountRequest.getPhoneNumber());
         log.info("Account does not exist, proceeding ahead to creating a new bank account");
@@ -54,20 +54,20 @@ public class AccountServiceImpl implements AccountService {
         return account;
     }
 
-    @Override
-    public Account getAccountBySortCodeAndAccountNumber(final String sortCode, final String accountNumber) {
-        log.info("Getting account... sortCode={} accountNumber={}", sortCode, accountNumber);
-        Account account = accountRepository.findBySortCodeAndAccountNumber(sortCode, accountNumber)
-            .orElseThrow(() -> new AccountNotFoundException(
-                "Account with sort code=" + sortCode + " and account number=" + accountNumber
-                    + " could not be found"));
-        account.setTransactions(
-            transactionRepository.findBySourceAccountIdOrderByInitiationDate(account.getId()));
-        return account;
-    }
+//    @Override
+//    public Account getAccountBySortCodeAndAccountNumber(final String sortCode, final String accountNumber) {
+//        log.info("Getting account... sortCode={} accountNumber={}", sortCode, accountNumber);
+//        Account account = accountRepository.findBySortCodeAndAccountNumber(sortCode, accountNumber)
+//            .orElseThrow(() -> new AccountNotFoundException(
+//                "Account with sort code=" + sortCode + " and account number=" + accountNumber
+//                    + " could not be found"));
+//        account.setTransactions(
+//            transactionRepository.findBySourceAccountIdOrderByInitiationDate(account.getId()));
+//        return account;
+//    }
 
     @Override
-    public List<Account> finalAllAccounts(final AccountCriteria accountCriteria) {
+    public List<Account> findAllAccounts(AccountCriteria accountCriteria) {
         log.info("Enter getAccounts method");
         List<Account> accounts = accountRepository.findByStatus(Status.ACTIVATE)
             .stream()

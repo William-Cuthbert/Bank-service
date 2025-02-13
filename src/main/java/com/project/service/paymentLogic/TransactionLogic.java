@@ -1,4 +1,4 @@
-package com.project.service.logic;
+package com.project.service.paymentLogic;
 
 import com.project.repository.entity.Transaction;
 

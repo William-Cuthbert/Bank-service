@@ -2,7 +2,7 @@ package com.project.utility;
 
 import java.time.format.DateTimeFormatter;
 
-public class CommonUtils {
+public class ApiUtils {
     public static final String ACCOUNT_ENDPOINT = "/account";
     public static final String ACCOUNT_ID_ENDPOINT = ACCOUNT_ENDPOINT + "/{currentAccountId}";
     public static final String ACCOUNTS_ENDPOINT = "/accounts";

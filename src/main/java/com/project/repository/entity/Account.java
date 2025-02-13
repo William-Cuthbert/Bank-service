@@ -11,7 +11,6 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Version;
 
 @Builder
 @Data
@@ -31,6 +30,4 @@ public class Account {
     private Status status;
     @OneToMany
     private List<Transaction> transactions;
-    @Version
-    private int version;
 }

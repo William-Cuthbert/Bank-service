@@ -2,16 +2,16 @@ package com.project.service;
 
 import java.util.List;
 import com.project.dto.account.AccountCriteria;
-import com.project.dto.account.CreateAccountRequest;
+import com.project.dto.account.AccountDtoRequest;
 import com.project.repository.entity.Account;
 
 public interface AccountService {
 
-    Account createAccount(CreateAccountRequest createAccountRequest);
+    Account createAccount(AccountDtoRequest createAccountRequest);
 
-    Account getAccountBySortCodeAndAccountNumber(String sortCode, String accountNumber);
+//    Account getAccountBySortCodeAndAccountNumber(String sortCode, String accountNumber);
 
-    List<Account> finalAllAccounts(AccountCriteria accountCriteria);
+    List<Account> findAllAccounts(AccountCriteria accountCriteria);
 
     Account updateAccount(Account account);
 

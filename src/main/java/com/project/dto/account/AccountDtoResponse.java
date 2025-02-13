@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountResponse {
+public class AccountDtoResponse {
     private String id;
     private String fullName;
     private String bankName;

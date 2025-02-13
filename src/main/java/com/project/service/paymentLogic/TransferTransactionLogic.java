@@ -1,4 +1,4 @@
-package com.project.service.logic;
+package com.project.service.paymentLogic;
 
 import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import javax.persistence.OptimisticLockException;
-import javax.transaction.Transactional;
 import org.springframework.stereotype.Component;
 
 @Slf4j

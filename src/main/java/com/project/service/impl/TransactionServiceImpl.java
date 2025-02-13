@@ -5,13 +5,13 @@ import com.project.enums.PaymentResult;
 import com.project.enums.PaymentType;
 import com.project.repository.entity.Transaction;
 import com.project.repository.TransactionRepository;
-import com.project.service.logic.DepositTransactionLogic;
-import com.project.service.logic.RefundTransactionLogic;
-import com.project.service.logic.TransactionLogic;
+import com.project.service.paymentLogic.DepositTransactionLogic;
+import com.project.service.paymentLogic.RefundTransactionLogic;
+import com.project.service.paymentLogic.TransactionLogic;
 import com.project.service.TransactionService;
 
-import com.project.service.logic.TransferTransactionLogic;
-import com.project.service.logic.WithdrawTransactionLogic;
+import com.project.service.paymentLogic.TransferTransactionLogic;
+import com.project.service.paymentLogic.WithdrawTransactionLogic;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
